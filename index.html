@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman Kelulusan</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    @keyframes confetti-fall {
+      0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(34,197,94,0.3); }
+      50% { box-shadow: 0 0 40px rgba(34,197,94,0.6); }
+    }
+    .animate-fade-up { animation: fade-up 0.6s ease-out forwards; }
+    .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      animation: confetti-fall 3s ease-in forwards;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto" style="font-family: 'DM Sans', sans-serif;">
+  <div id="app" class="h-full w-full min-h-full" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);"><!-- Header -->
+   <div class="text-center pt-12 pb-8 px-4">
+    <div class="inline-block mb-4">
+     <div class="w-24 h-24 mx-auto rounded-full bg-white flex items-center justify-center shadow-lg overflow-hidden border-2 border-amber-500 p-1">
+      <img src="logo-sekolah.png" alt="Logo SMAS 28 OKTOBER 1928" class="w-full h-full object-contain">
+     </div>
+    </div>
+    <h1 id="title" class="text-3xl md:text-4xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Pengumuman Kelulusan</h1>
+    <p id="school" class="text-amber-400 text-lg font-semibold">SMAS 28 OKTOBER 1928</p>
+    <p id="address" class="text-slate-300 text-xs md:text-sm mt-2 max-w-md mx-auto leading-relaxed">Jl. Mampang Prapatan XI, RT.1/RW.4, Tegal Parang, Kec. Mampang Prpt., Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta</p>
+    <p id="year" class="text-slate-400 text-sm mt-3">Tahun Ajaran 2025/2026</p>
+   </div><!-- Search Form -->
+   <div class="max-w-md mx-auto px-4 pb-8">
+    <div class="bg-slate-800/80 backdrop-blur rounded-2xl p-6 border border-slate-700"><label for="noUjian" class="block text-slate-300 text-sm font-medium mb-2">Masukkan Nomor Ujian</label>
+     <div class="flex gap-2"><input type="text" id="noUjian" placeholder="Contoh: XII.1.01" class="flex-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition"> <button id="searchBtn" onclick="searchStudent()" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold rounded-xl hover:from-amber-400 hover:to-amber-500 transition shadow-lg"> <i data-lucide="search" style="width:20px;height:20px;"></i> </button>
+     </div>
+     <p id="errorMsg" class="text-red-400 text-sm mt-2 hidden"></p>
+    </div>
+   </div><!-- Result -->
+   <div id="result" class="max-w-md mx-auto px-4 pb-12 hidden">
+    <div id="resultCard" class="bg-slate-800/80 backdrop-blur rounded-2xl p-6 border border-slate-700">
+     <div class="text-center mb-5">
+      <div class="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center mb-3"><i data-lucide="check-circle" style="width:36px;height:36px;color:#22c55e;"></i>
+      </div>
+      <p id="statusText" class="text-xl md:text-2xl font-bold text-green-400" style="font-family:'Playfair Display',serif;">SELAMAT ATAS KELULUSAN ANDA 🎉</p>
+     </div>
+     <div class="space-y-3">
+      <div class="flex justify-between items-center py-2 border-b border-slate-700"><span class="text-slate-400 text-sm">No. Ujian</span> <span id="resNoUjian" class="text-white font-semibold"></span>
+      </div>
+      <div class="flex justify-between items-center py-2 border-b border-slate-700"><span class="text-slate-400 text-sm">Nama Siswa</span> <span id="resNama" class="text-white font-semibold text-right max-w-[200px]"></span>
+      </div>
+      <div class="flex justify-between items-center py-2 border-b border-slate-700"><span class="text-slate-400 text-sm">NISN</span> <span id="resNISN" class="text-white font-semibold"></span>
+      </div>
+      <div class="flex justify-between items-center py-2 border-b border-slate-700"><span class="text-slate-400 text-sm">Status Kelulusan</span> <span id="resStatus" class="text-green-400 font-bold text-lg"></span>
+      </div>
+      <div class="mt-5 pt-5 border-t border-slate-700">
+       <p id="motivation" class="text-slate-300 text-sm italic leading-relaxed text-center">Kelulusan ini adalah awal dari perjalanan baru. Teruslah melangkah, raih cita-cita, dan jadilah pribadi yang bermanfaat bagi bangsa dan masyarakat.</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Footer -->
+   <div class="text-center pb-8 px-4">
+    <div class="max-w-md mx-auto">
+     <div class="text-slate-400 text-xs space-y-1">
+      <p>Diterbitkan oleh Panitia Kelulusan Sekolah</p>
+      <p>Tanggal Pengumuman: 4 Mei 2026</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const students = [
+      {no:"XII.1.01",nama:"ABDI ABRAR RABBANI",nisn:"73016209",status:"LULUS"},
+      {no:"XII.1.02",nama:"CANTIKA INTAN CAHYANI",nisn:"3086298543",status:"LULUS"},
+      {no:"XII.1.03",nama:"DISYA LOVELY FAHRIANTY",nisn:"82869028",status:"LULUS"},
+      {no:"XII.1.04",nama:"KHAIRUNNISA NUR ZAHRA",nisn:"78569300",status:"LULUS"},
+      {no:"XII.1.05",nama:"MOCH. ROZAQUL MUHTADIN",nisn:"88736871",status:"LULUS"},
+      {no:"XII.1.06",nama:"MUHAMMAD ALFARIZI",nisn:"73525645",status:"LULUS"},
+      {no:"XII.1.07",nama:"MUHAMMAD ARKA SYA'BAN",nisn:"82785639",status:"LULUS"},
+      {no:"XII.1.08",nama:"MUH. BAYU DAMARJATI S.N",nisn:"89429868",status:"LULUS"},
+      {no:"XII.1.09",nama:"MUHAMMAD ZEE ALGHAZALI",nisn:"82954525",status:"LULUS"},
+      {no:"XII.1.10",nama:"NAIA PURI DESWITA",nisn:"76103698",status:"LULUS"},
+      {no:"XII.1.11",nama:"NAJWA NURFAUZIAH",nisn:"78327965",status:"LULUS"},
+      {no:"XII.1.12",nama:"NELITA ZAINATUL ZAHRA",nisn:"88631591",status:"LULUS"},
+      {no:"XII.1.13",nama:"NEVA LISYAMI",nisn:"73335696",status:"LULUS"},
+      {no:"XII.1.14",nama:"NUR ZAHRA MAHARANI",nisn:"3084926461",status:"LULUS"},
+      {no:"XII.1.15",nama:"RATU HERLINA",nisn:"73256499",status:"LULUS"},
+      {no:"XII.1.16",nama:"RIANTI SALSABILA OKTAVIANTI",nisn:"76405834",status:"LULUS"},
+      {no:"XII.1.17",nama:"RIZTY EVA SARI",nisn:"73406573",status:"LULUS"},
+      {no:"XII.1.18",nama:"SALVIRA TRINATASYA",nisn:"75450672",status:"LULUS"},
+      {no:"XII.1.19",nama:"VIOLA ALFIANTI SAHARA",nisn:"79898588",status:"LULUS"},
+      {no:"XII.1.20",nama:"ZAHRATUN SYITA",nisn:"88548433",status:"LULUS"},
+      {no:"XII.2.01",nama:"ABU RIJAL MUMTAZ",nisn:"71334423",status:"LULUS"},
+      {no:"XII.2.02",nama:"AKBAR WICAKSONO",nisn:"73070252",status:"LULUS"},
+      {no:"XII.2.03",nama:"ANDI SUKAINI",nisn:"86532663",status:"LULUS"},
+      {no:"XII.2.04",nama:"ANITA NURBAITI",nisn:"79854999",status:"LULUS"},
+      {no:"XII.2.05",nama:"AZMI DAFI BAIHAQI",nisn:"84917850",status:"LULUS"},
+      {no:"XII.2.06",nama:"CANDY SABEL YOHANA",nisn:"82249208",status:"LULUS"},
+      {no:"XII.2.07",nama:"FIRLA TIERRA SHAFIRA",nisn:"77899650",status:"LULUS"},
+      {no:"XII.2.08",nama:"KARINA CHESSA LARASATI",nisn:"74301954",status:"LULUS"},
+      {no:"XII.2.09",nama:"KURNIA ARIYANTA",nisn:"73931215",status:"LULUS"},
+      {no:"XII.2.10",nama:"MEIDIANA AURA",nisn:"82471643",status:"LULUS"},
+      {no:"XII.2.11",nama:"MUHAMAD RENOVIAN",nisn:"77144318",status:"LULUS"},
+      {no:"XII.2.12",nama:"MUHAMMAD DWIKI ZALPUTRA",nisn:"76800681",status:"LULUS"},
+      {no:"XII.2.13",nama:"MUHAMMAD FARRAS WADA UTAMA",nisn:"55644805",status:"LULUS"},
+      {no:"XII.2.14",nama:"MUHAMMAD IRSANDY",nisn:"72177969",status:"LULUS"},
+      {no:"XII.2.15",nama:"MUHAMMAD MALIK SYAHBANI",nisn:"78629743",status:"LULUS"},
+      {no:"XII.2.16",nama:"NAZWAH MARASABESSY",nisn:"86513708",status:"LULUS"},
+      {no:"XII.2.17",nama:"NESTA SATRIA ANAYASA MAHARA",nisn:"82196094",status:"LULUS"},
+      {no:"XII.2.18",nama:"NURFITRI ANGGREINI",nisn:"75445759",status:"LULUS"},
+      {no:"XII.2.19",nama:"RISKA JULIANA",nisn:"74988389",status:"LULUS"},
+      {no:"XII.2.20",nama:"SATRIO AGUNG KUNCORO",nisn:"77901363",status:"LULUS"},
+      {no:"XII.2.21",nama:"SILVA KANIA AZAHRA",nisn:"3089710423",status:"LULUS"},
+      {no:"XII.2.22",nama:"TANIA APRILIA SULISTYO PUTRI",nisn:"82749600",status:"LULUS"},
+      {no:"XII.2.23",nama:"ZIKHRA AQNIES DWI PRATIWI",nisn:"78678998",status:"LULUS"}
+    ];
+
+    function searchStudent() {
+      const input = document.getElementById('noUjian').value.trim().toUpperCase();
+      const errorMsg = document.getElementById('errorMsg');
+      const result = document.getElementById('result');
+
+      if (!input) {
+        errorMsg.textContent = "Silakan masukkan nomor ujian.";
+        errorMsg.classList.remove('hidden');
+        result.classList.add('hidden');
+        return;
+      }
+
+      const student = students.find(s => s.no.toUpperCase() === input);
+
+      if (!student) {
+        errorMsg.textContent = "Nomor ujian tidak ditemukan. Periksa kembali nomor Anda.";
+        errorMsg.classList.remove('hidden');
+        result.classList.add('hidden');
+        return;
+      }
+
+      errorMsg.classList.add('hidden');
+      document.getElementById('resNoUjian').textContent = student.no;
+      document.getElementById('resNama').textContent = student.nama;
+      document.getElementById('resNISN').textContent = student.nisn;
+      document.getElementById('resStatus').textContent = student.status;
+      result.classList.remove('hidden');
+      result.querySelector('div').classList.remove('animate-fade-up');
+      void result.querySelector('div').offsetWidth;
+      result.querySelector('div').classList.add('animate-fade-up');
+      showConfetti();
+    }
+
+    function showConfetti() {
+      const container = document.getElementById('confettiContainer');
+      container.innerHTML = '';
+      const colors = ['#22c55e','#f59e0b','#3b82f6','#ec4899','#a855f7'];
+      for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 1.5 + 's';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        container.appendChild(piece);
+      }
+      setTimeout(() => container.innerHTML = '', 4000);
+    }
+
+    document.getElementById('noUjian').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchStudent();
+    });
+
+    // Element SDK
+    const defaultConfig = {
+      page_title: "PENGUMUMAN KELULUSAN",
+      school_name: "SMAS 28 OKTOBER 1928",
+      academic_year: "2025/2026",
+      background_color: "#0f172a",
+      surface_color: "#1e293b",
+      text_color: "#ffffff",
+      primary_action: "#f59e0b",
+      secondary_action: "#22c55e",
+      font_family: "DM Sans",
+      font_size: 16
+    };
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        const c = { ...defaultConfig, ...config };
+        document.getElementById('title').textContent = c.page_title;
+        document.getElementById('school').textContent = c.school_name;
+        document.getElementById('year').textContent = "Tahun Ajaran " + c.academic_year;
+
+        document.getElementById('app').style.background = `linear-gradient(135deg, ${c.background_color} 0%, ${c.surface_color} 50%, ${c.background_color} 100%)`;
+        document.getElementById('title').style.color = c.text_color;
+        document.getElementById('school').style.color = c.primary_action;
+        document.getElementById('resStatus').style.color = c.secondary_action;
+        document.getElementById('statusText').style.color = c.secondary_action;
+        document.getElementById('searchBtn').style.background = `linear-gradient(to right, ${c.primary_action}, ${c.primary_action})`;
+
+        document.body.style.fontFamily = `${c.font_family}, DM Sans, sans-serif`;
+        const base = c.font_size || 16;
+        document.getElementById('title').style.fontSize = `${base * 2}px`;
+        document.getElementById('school').style.fontSize = `${base * 1.1}px`;
+      },
+      mapToCapabilities: (config) => {
+        const c = { ...defaultConfig, ...config };
+        const makeColor = (key) => ({
+          get: () => c[key] || defaultConfig[key],
+          set: (v) => { c[key] = v; window.elementSdk.setConfig({ [key]: v }); }
+        });
+        return {
+          recolorables: [
+            makeColor('background_color'),
+            makeColor('surface_color'),
+            makeColor('text_color'),
+            makeColor('primary_action'),
+            makeColor('secondary_action')
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => c.font_family || defaultConfig.font_family,
+            set: (v) => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => c.font_size || defaultConfig.font_size,
+            set: (v) => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        };
+      },
+      mapToEditPanelValues: (config) => {
+        const c = { ...defaultConfig, ...config };
+        return new Map([
+          ["page_title", c.page_title],
+          ["school_name", c.school_name],
+          ["academic_year", c.academic_year]
+        ]);
+      }
+    });
+
+    lucide.createIcons();
+  </script>
+ </body>
+</html>
